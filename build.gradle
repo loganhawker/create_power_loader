@@ -2,14 +2,18 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '1.5.+'
+    id 'fabric-loom' version '1.10.5'
     id 'me.modmuss50.mod-publish-plugin' version '0.4.5'
 }
 
 def secrets = new Properties()
-file("./secrets.properties").withInputStream {
-    stream -> secrets.load(stream)
+def secretsFile = file("./secrets.properties")
+if (secretsFile.exists()) {
+    secretsFile.withInputStream { stream -> secrets.load(stream) }
+} else {
+    logger.warn("secrets.properties was not found. Continuing without publish tokens; publish tasks may fail unless tokens are set via environment variables.")
 }
+def secretOrEnv = { String key -> secrets.getProperty(key, System.getenv(key) ?: "") }
 
 loom {
     mods {
@@ -64,10 +68,8 @@ repositories {
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
-    maven {
-        name = 'tterrag maven'
-        url = 'https://maven.tterrag.com/'
-    }
+    // tterrag maven currently fails TLS validation in this environment.
+    // Keep mirror repositories below for the same artifacts.
     maven {
         // location of the maven that hosts JEI files before January 2023
         name = "Progwml6's maven"
@@ -101,6 +103,10 @@ repositories {
         url = "https://mvn.devos.one/releases/"
     }
     maven {
+        // Create ecosystem artifacts (Flywheel, Ponder)
+        url = "https://maven.createmod.net"
+    }
+    maven {
         // Forge Config API Port
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
     }
@@ -131,7 +137,6 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     modImplementation("com.tterrag.registrate_fabric:Registrate:${registrate_version}")
-    modImplementation("com.jozufozu.flywheel:flywheel-fabric-${flywheel_minecraft_version}:${flywheel_version}")
     modImplementation("com.jamieswhiteshirt:reach-entity-attributes:$reach_entity_attributes_version")
     modCompileOnly("com.simibubi.create:create-fabric-${create_minecraft_version}:${create_version}") {
         transitive = true
@@ -218,7 +223,7 @@ tasks.publishMods.dependsOn(tasks.assemble)
 tasks.publishMods.mustRunAfter(tasks.build)
 
 wrapper {
-    gradleVersion = '8.5'
+    gradleVersion = '8.12'
     distributionType = Wrapper.DistributionType.BIN
 }
 
@@ -229,13 +234,13 @@ publishMods {
     modLoaders.add("fabric")
 
     github {
-        accessToken = secrets.GITHUB_TOKEN
+        accessToken = secretOrEnv("GITHUB_TOKEN")
         repository = "hlysine/create_power_loader"
         commitish = "fabric"
     }
 
     modrinth {
-        accessToken = secrets.MODRINTH_TOKEN
+        accessToken = secretOrEnv("MODRINTH_TOKEN")
         projectId = "E9MuZ1zB"
         minecraftVersions.add(minecraft_version)
 
@@ -248,7 +253,7 @@ publishMods {
     }
 
     curseforge {
-        accessToken = secrets.CURSEFORGE_TOKEN
+        accessToken = secretOrEnv("CURSEFORGE_TOKEN")
         projectId = "976304"
         minecraftVersions.add(minecraft_version)
     }

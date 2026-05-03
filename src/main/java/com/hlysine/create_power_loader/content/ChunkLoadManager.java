@@ -3,7 +3,6 @@ package com.hlysine.create_power_loader.content;
 import com.hlysine.create_power_loader.CPLBlockEntityTypes;
 import com.hlysine.create_power_loader.CreatePowerLoader;
 import com.mojang.logging.LogUtils;
-import com.simibubi.create.foundation.utility.Pair;
 import io.github.fabricators_of_create.porting_lib.chunk.loading.PortingLibChunkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -14,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -55,7 +55,7 @@ public class ChunkLoadManager {
 
         if (!unforceQueue.isEmpty()) {
             for (Pair<UUID, Set<LoadedChunkPos>> pair : unforceQueue) {
-                unforceAllChunks(server, pair.getFirst(), pair.getSecond());
+                unforceAllChunks(server, pair.getLeft(), pair.getRight());
             }
             unforceQueue.clear();
         }

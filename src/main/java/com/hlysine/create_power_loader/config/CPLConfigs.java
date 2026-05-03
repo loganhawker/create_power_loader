@@ -1,10 +1,10 @@
 package com.hlysine.create_power_loader.config;
 
 import com.hlysine.create_power_loader.CreatePowerLoader;
-import com.simibubi.create.content.kinetics.BlockStressValues;
-import com.simibubi.create.foundation.config.ConfigBase;
+import com.simibubi.create.api.stress.BlockStressValues;
 import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
 import fuzs.forgeconfigapiport.api.config.v2.ModConfigEvents;
+import net.createmod.catnip.config.ConfigBase;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,7 +47,8 @@ public class CPLConfigs {
         for (Entry<ModConfig.Type, ConfigBase> pair : CONFIGS.entrySet())
             ForgeConfigRegistry.INSTANCE.register(CreatePowerLoader.MODID, pair.getKey(), pair.getValue().specification);
 
-        BlockStressValues.registerProvider(CreatePowerLoader.MODID, server());
+        CServer stress = server();
+        BlockStressValues.IMPACTS.registerProvider(stress::getImpact);
 
         ModConfigEvents.loading(CreatePowerLoader.MODID).register(CPLConfigs::onLoad);
         ModConfigEvents.reloading(CreatePowerLoader.MODID).register(CPLConfigs::onReload);
