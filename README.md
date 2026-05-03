@@ -16,9 +16,11 @@ A Create mod add-on adding immersive andesite and brass chunk loaders to Minecra
 
 [![Available for Forge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/forge_vector.svg)](https://modrinth.com/mod/create-power-loader/) [![Available for Fabric](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/fabric_vector.svg)](https://modrinth.com/mod/create-power-loader-fabric)
 
-## Create 6 and Minecraft 1.21
+## Create 6 on Fabric
 
-**Current status: ❌ Waiting for Create 6 on Fabric**
+**Current status: ✅ Supported for Minecraft 1.20.1**
+
+Minecraft 1.21 support is still pending.
 
 ## What's new in 1.5.0+
 
